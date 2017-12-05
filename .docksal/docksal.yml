@@ -1,0 +1,19 @@
+# Database-less stack for flat file CMS
+# Derived from ${HOME}/.docksal/stacks/stack-default.yml
+
+version: "2.1"
+
+services:
+  # Web
+  web:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: web
+    depends_on:
+      - cli
+
+  # CLI
+  cli:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: cli

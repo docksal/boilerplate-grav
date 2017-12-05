@@ -15,9 +15,37 @@ NC='\033[0m'
 
 echo-green () { echo -e "${green}$1${NC}"; }
 
+_confirm () 
+{
+	while true; do
+		echo -en "$1 (y/n): "
+		read -p "" answer
+		case "$answer" in
+			[Yy]|[Yy][Ee][Ss] )
+				break
+				;;
+			[Nn]|[Nn][Oo] )
+				[[ "$2" == "--no-exit" ]] && return 1
+				exit 1
+				;;
+			* )
+				echo 'Please answer yes or no.'
+		esac
+	done
+}
+
 # --- Runtime ---
 
-fin start
+# Revert all changes
+cd "$PROJECT_ROOT"
+
+if [[ "$(git status -z)" != "" ]]; then
+	_confirm "${yellow}You have local changes${NC} (see git status). Re-install is going to remove them. \nContinue?${NC}"
+fi
+
+git checkout .
+git cleanup -fd .
+#fin start
 
 echo-green "Done! Login to your Grav site Admin UI."
 echo -e "  URL:      ${yellow}http://${VIRTUAL_HOST}/admin${NC}"

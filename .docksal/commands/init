@@ -54,12 +54,12 @@ if [[ "$(git status -z)" != "" ]]; then
 		"Re-install is going to remove them." \
 		"See git status for details."
 	_confirm "Continue?"
-	#git checkout .
-	#git clean -fd .
+	git checkout .
+	git clean -fd .
 fi
 
 # Start the project
-#fin start
+fin start
 
 echo -e "${green_bg} DONE ${NC}"
 echo-green "  Grav site Admin UI."

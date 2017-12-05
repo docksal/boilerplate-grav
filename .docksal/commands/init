@@ -49,7 +49,8 @@ fi
 # Start the project
 fin start
 
-echo-green "Done! Login to your Grav site Admin UI."
+echo -e "${green_bg}DONE${NC}"
+echo-green "Login to your Grav site Admin UI."
 echo -e "  URL:      ${yellow}http://${VIRTUAL_HOST}/admin${NC}"
 echo -e "  Username: ${yellow}admin${NC}"
 echo -e "  Password: ${yellow}Passw0rd${NC}"

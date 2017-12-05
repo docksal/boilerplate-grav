@@ -36,16 +36,18 @@ _confirm ()
 
 # --- Runtime ---
 
-# Revert all changes
+
 cd "$PROJECT_ROOT"
 
+# Revert all changes
 if [[ "$(git status -z)" != "" ]]; then
 	_confirm "${yellow}You have local changes${NC} (see git status). Re-install is going to remove them. \nContinue?${NC}"
+  git checkout .
+  git clean -fd .
 fi
 
-git checkout .
-git cleanup -fd .
-#fin start
+# Start the project
+fin start
 
 echo-green "Done! Login to your Grav site Admin UI."
 echo -e "  URL:      ${yellow}http://${VIRTUAL_HOST}/admin${NC}"

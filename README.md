@@ -1,4 +1,4 @@
-# Grav boilerplate for Docksal
+# Grav CMS boilerplate for Docksal
 
 Boilerplate Grav CMS (https://getgrav.org/) project for Docksal with admin interface enabled (`/admin`).
 

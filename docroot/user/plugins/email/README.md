@@ -20,6 +20,11 @@ from:
 from_name:
 to:
 to_name:
+queue:
+  enabled: true
+  flush_frequency: '* * * * *'
+  flush_msg_limit: 10
+  flush_time_limit: 100
 mailer:
   engine: sendmail
   smtp:
@@ -54,7 +59,7 @@ Setup the Email plugin to use that SMTP server with the fake inbox data. For exa
 mailer:
   engine: smtp
   smtp:
-    server: mailtrap.io
+    server: smtp.mailtrap.io
     port: 2525
     encryption: none
     user: YOUR_MAILTRAP_INBOX_USER
@@ -88,6 +93,72 @@ mailer:
 
 > NOTE: Check your email sending limits: https://support.google.com/a/answer/166852?hl=en
 
+#### Sparkpost
+
+Generous email sending limits even in the free tier, and simple setup, make [Sparkpost](https://www.sparkpost.com) a great option for email sending. You just need to create an account, then setup a verified sending domain.  Sparkpost does a nice job of making this process very easy and undertandable. Then just click on the SMTP Relay option to get your details for the configuration:
+
+```
+mailer:
+  engine: smtp
+  smtp:
+    server: smtp.sparkpostmail.com
+    port: 587
+    encryption: tls
+    user: 'SMTP_Injection'
+    password: 'SEND_EMAIL_API_KEY'
+```
+
+Then try sending a test email...
+
+#### Sendgrid
+
+[Sendgrid](https://sendgrid.com) offers a very easy-to-setup serivce with 100 emails/day for free.  The next level allows you to send 40k/email a day for just $10/month. Configuration is pretty simple, just create an account, then click SMTP integration and click the button to create an API key.  The configuration is as follows:
+
+```
+mailer:
+  engine: smtp
+  smtp:
+    server: smtp.sendgrid.net
+    port: 587
+    encryption: tls
+    user: 'apikey'
+    password: 'YOUR_SENDGRID_API_KEY'
+```
+
+#### Mailgun
+
+[Mailgun is a great service](https://www.mailgun.com/) that offers 10k/emails per month for free.  Setup does require SPIF domain verification so that means you need to add at least a TXT entry in your DNS.  This is pretty standard for SMTP sending services and does provide verification for remote email servers and makes your email sending more reliable.  The Mailgun site, walks you through this process however, and the verification process is simple and fast.
+
+```
+mailer:
+  engine: smtp
+  smtp:
+    server: smtp.mailgun.org
+    port: 587
+    encryption: tls
+    user: 'MAILGUN_EMAIL_ADDRESS'
+    password: 'MAILGUN_EMAIL_PASSWORD'
+```
+
+Adjust these configurations for your account.
+
+#### MailJet
+
+Mailjet is another great service that is easy to quickly setup and get started sending email.  The free account gives you 200 emails/day or 600 emails/month.  Just signup and setup your SPF and DKIM entries for your domain.  Then click on the SMTP settings and use those to configure the email plugin:
+
+```
+mailer:
+  engine: smtp
+  smtp:
+    server: in-v3.mailjet.com
+    port: 587
+    encryption: tls
+    user: 'MAILJUST_USERNAME_API_KEY'
+    password: 'MAILJUST_PASSWORD_SECRET_KEY'
+```
+
+It's that easy!
+
 #### Sendmail
 
 Although not as reliable as SMTP not providing as much debug information, sendmail is a simple option as long as your hosting provider is not blocking the default SMTP port `25`:
@@ -100,6 +171,30 @@ mailer:
 ```
 
 Simply adjust your binary command line to suite your environment
+
+### SMTP Email Services
+
+Solid SMTP options that even provide a FREE tier for low email volumes include:
+
+* SendGrid (100/day free) - https://sendgrid.com
+* Mailgun - (10k/month free) - https://www.mailgun.com
+* Mailjet - (6k/month free) - https://www.mailjet.com/
+* Sparkpost - (15k/month free) - https://www.sparkpost.com
+* Amazon SES (62k/month free) - https://aws.amazon.com/ses/
+
+If you are still unsure why should be using one in the first place, check out this article: https://zapier.com/learn/email-marketing/best-transactional-email-sending-services/
+
+## Email Queue
+
+For performance reasons, it's often desirable to queue emails and send them in batches, rather than forcing Grav to wait while an email is sent.  This is because email servers are sometimes slow and you might not want to wait for the whole email-sending process before continuing with Grav processing.
+
+To address this, you can enable the **Email Queue** and this will ensure all email's in Grav are actually sent to the queue, and not sent directly.  In order for the emails to be actually sent, you need to flush the queue.  By default this is handled by the **Grav Scheduler**, so you need to ensure you have that enabled and setup correctly or **your emails will not be sent!!!**.
+
+You can also manually flush the queue by using the provided CLI command:
+
+```
+$ bin/plugin email flush-queue
+```
 
 ## Testing with CLI Command
 
@@ -135,7 +230,7 @@ Add this code in your plugins:
 
         $sent = $this->grav['Email']->send($message);
 ```
-
+ 
 # Emails sent with Forms
 
 When executing email actions during form processing, action parameters are inherited from the global configuration but may also be overridden on a per-action basis.
